@@ -1,0 +1,71 @@
+---
+title: "Peer-graded Assignment: Course Project: Shiny Application and Reproducible Pitch"
+author: "Sergey Ostrovsky"
+date: "July 25, 2017"
+output: ioslides_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction to IRIS
+
+This peer assessed assignment has two parts. First, you will create a Shiny application and deploy it on Rstudio's servers. Second, you will use Slidify or Rstudio Presenter to prepare a reproducible pitch presentation about your application. 
+
+## Description of IRIS Dataset
+
+This famous (Fisher's or Anderson's) iris data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.
+
+This shiny app will show you Histogram for sepals' and petals' length and width.
+
+## ui.R
+```{r, echo=TRUE, eval=FALSE}
+library(shiny)
+shinyUI(fluidPage(
+  titlePanel("Historgram for IRIS"),
+  sidebarLayout(
+    sidebarPanel(
+       sliderInput("bins",
+                   "Number of bins:",
+                   min = 1,
+                   max = 15,
+                   value = 10),
+       selectInput("col", "iris$Sepal.Length", names(iris)[1:4]),
+       checkboxInput("showLine", "Show Line", value = TRUE)
+    ),
+    mainPanel(
+       plotOutput("distPlot")
+    )
+  )
+))
+```
+
+## server.R
+```{r, echo=TRUE, eval=FALSE}
+library(shiny)
+shinyServer(function(input, output) {
+  output$distPlot <- renderPlot({
+    x    <- iris[, input$col]
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    hist(x, breaks = bins, 
+         col = 'darkgray', 
+         main = sprintf("Histogram for %s", input$col),
+         xlab = input$col,
+         border = 'white', 
+         freq = FALSE)
+    if(input$showLine){
+        lines(density(x))
+    }
+  })
+})
+```
+
+## Links
+
+1. [Link to Shiny App](https://sostrovs.shinyapps.io/shinyapp/)
+2. [Link to github](https://github.com/sostrovs/Developing-Data-Products)
+
+
+
